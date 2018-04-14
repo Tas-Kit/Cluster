@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  psqldb:
+    image: postgres
+    ports:
+      - "8002:5432"
+    volumes:
+      - ../psqldb:/var/lib/postgresql/data
+  neo4jdb:
+    image: neo4j
+    ports:
+     - "8003:7474"
+     - "8004:7687"
+    volumes:
+       - ../neo4jdb/data:/data
+       - ../neo4jdb/logs:/logs
+    environment:
+      - NEO4J_AUTH=neo4j/neo4jpass
+  webfront:
+    build: ../webfront
+    image: webfront
+    command: ./docker-entrypoint.sh
+    volumes:
+      - ../webfront:/webfront
+    ports:
+      - "8001:8000"
+    depends_on:
+      - psqldb
+      - neo4jdb
+  # chrome:
+  #   image: selenium/standalone-chrome
+  #   ports:
+  #     - "4444"
+  webfront_test:
+    build: ../webfront
+    image: webfront
+    command: sh test_entry.sh
+    volumes:
+      - ../webfront:/webfront
+    depends_on:
+      - webfront
+      # - chrome
