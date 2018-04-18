@@ -4,7 +4,7 @@ services:
   psqldb:
     image: postgres
     ports:
-      - "8002:5432"
+      - "8005:5432"
     volumes:
       - ../psqldb:/var/lib/postgresql/data
   neo4jdb:
@@ -24,10 +24,18 @@ services:
     volumes:
       - ../webfront:/webfront
     ports:
-      - "8001:8000"
+      - "8002:8000"
     depends_on:
       - psqldb
       - neo4jdb
+  proxyserver:
+    build: ../proxyserver
+    image: proxyserver
+    command: python proxyserver/manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8001:8000"
+    volumes:
+      - ../proxyserver:/proxyserver
   # chrome:
   #   image: selenium/standalone-chrome
   #   ports:
