@@ -23,29 +23,28 @@ services:
     command: ./docker-entrypoint.sh
     volumes:
       - ../webfront:/webfront
-    ports:
-      - "8002:8000"
     depends_on:
       - psqldb
       - neo4jdb
   proxyserver:
     build: ../proxyserver
     image: proxyserver
-    command: python proxyserver/manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8001:8000"
     volumes:
       - ../proxyserver:/proxyserver
-  # chrome:
-  #   image: selenium/standalone-chrome
-  #   ports:
-  #     - "4444"
-  webfront_test:
-    build: ../webfront
-    image: webfront
-    command: sh test_entry.sh
+  authserver:
+    build: ../authserver
+    image: authserver
+    command: ./docker-entrypoint.sh
     volumes:
-      - ../webfront:/webfront
-    depends_on:
-      - webfront
-      # - chrome
+      - ../authserver:/authserver
+  taskservice:
+    build: ../taskservice
+    image: taskservice
+    command: ./docker-entrypoint.sh
+    ports:
+      - "8002:8000"
+    volumes:
+      - ../taskservice:/taskservice
