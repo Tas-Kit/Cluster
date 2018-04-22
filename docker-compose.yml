@@ -36,6 +36,16 @@ services:
       - ../webfront:/webfront
     depends_on:
       - proxyserver
+  webmain:
+    build: ../webmain
+    image: webmain
+    command: ./docker-entrypoint.sh
+    volumes:
+      - ../webmain:/webmain
+    ports:
+      - "8006:3000"
+    depends_on:
+      - proxyserver
   authserver:
     build: ../authserver
     image: authserver
