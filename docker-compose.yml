@@ -81,5 +81,7 @@ services:
       - "8002:8000"
     volumes:
       - ../taskservice:/taskservice
+    environment:
+      - DJANGO_SETTINGS_MODULE=taskservice.settings.dev
     depends_on:
       - proxyserver
