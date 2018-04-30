@@ -17,6 +17,16 @@ services:
        - ../neo4jdb/logs:/logs
     environment:
       - NEO4J_AUTH=neo4j/neo4jpass
+  memcached:
+    image: memcached
+  nginx-proxy:
+    build: ../nginx-proxy
+    image: nginx-proxy
+    command: sh docker-entrypoint.sh
+    ports:
+      - "8010:80"
+    volumes:
+      - ../nginx-proxy:/etc/nginx/conf.d
   proxyserver:
     build: ../proxyserver
     image: proxyserver
@@ -25,15 +35,20 @@ services:
       - "8001:8000"
     volumes:
       - ../proxyserver:/proxyserver
+    environment:
+      - DJANGO_SETTINGS_MODULE=proxyserver.settings.dev
     depends_on:
       - psqldb
       - neo4jdb
+      - memcached
   webfront:
     build: ../webfront
     image: webfront
     command: ./docker-entrypoint.sh
     volumes:
       - ../webfront:/webfront
+    environment:
+      - DJANGO_SETTINGS_MODULE=webfront.settings.dev
     depends_on:
       - proxyserver
   webmain:
@@ -44,6 +59,8 @@ services:
       - ../webmain:/webmain
     ports:
       - "8006:3000"
+    environment:
+      - BASE_URL=http://localhost:8001/api/v1
     depends_on:
       - proxyserver
   authserver:
@@ -54,6 +71,8 @@ services:
       - ../authserver:/authserver
     depends_on:
       - proxyserver
+    environment:
+      - DJANGO_SETTINGS_MODULE=authserver.settings.dev
   taskservice:
     build: ../taskservice
     image: taskservice
