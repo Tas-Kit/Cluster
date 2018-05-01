@@ -19,14 +19,14 @@ services:
       - NEO4J_AUTH=neo4j/neo4jpass
   memcached:
     image: memcached
-  nginx-proxy:
-    build: ../nginx-proxy
-    image: nginx-proxy
-    command: sh docker-entrypoint.sh
-    ports:
-      - "8010:80"
-    volumes:
-      - ../nginx-proxy:/etc/nginx/conf.d
+  # nginx-proxy:
+  #   build: ../nginx-proxy
+  #   image: nginx-proxy
+  #   command: sh docker-entrypoint.sh
+  #   ports:
+  #     - "8010:80"
+  #   volumes:
+  #     - ../nginx-proxy:/etc/nginx/conf.d
   proxyserver:
     build: ../proxyserver
     image: proxyserver
